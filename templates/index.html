@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include the CSRF token in a meta tag in your HTML -->
+    <meta name="csrf-token" content="">
+    <title>Appointment Booking</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <h1>Appointment Booking</h1>
+    {% if username %}
+        <p>Hello, {{ username }} you are already logged in.</p>
+        <a href="/logout">LOGOUT</a>
+    {% else %}
+        <p>You are not logged in. Please <a href="/login">Login</a>to access the home page</p>
+    {% endif %}
+    <form action="" id="appointmentForm">
+        <label for="date">Select Date: </label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="time">Select Time:</label>
+        <input type="time" id="time" name="time" required>
+
+        <!-- New input fields -->
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <button type="button" id="scheduleButton">Schedule Appointment</button>
+        <div id="loadingSpinner">Loading...</div>
+    </form>
+
+    <script src="static/js/index.js"></script>
+    <script src="{{ url_for('static', filename='js/index.js')}}"></script>
+    <script src="static/js/jquery-3.6.4.min.js"></script>
+    <script src="static/js/session_management.js"></script>
+</body>
+</html>

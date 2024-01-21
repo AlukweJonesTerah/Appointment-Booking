@@ -1,0 +1,78 @@
+
+def get_google_auth():
+    creds = None
+
+    try:
+        if os.path.exists("token.json"):
+            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                try:
+                    # Check if the client secret file exists
+                    if not os.path.exists("client_secret.json"):
+                        raise FileNotFoundError("Client secret file is missing")
+
+                    flow = InstalledAppFlow.from_client_secrets_file("client_secret.json", SCOPES)
+                    creds = flow.run_local_server(port=0)
+
+                    # Save the obtained token to the user's model
+                    if current_user.is_authenticated:
+                        current_user.set_google_calendar_token(creds.to_json())
+
+                    # Write the token to a local file
+                    with open("token.json", "w") as token_file:
+                        token_file.write(creds.to_json())
+                except Exception as e:
+                    logging.error('Client secret file is missing: %s', e)
+                    raise ValueError("Client secret file is missing. Please check your configuration.")
+
+    except FileNotFoundError as e:
+        logging.error("Token file not found: %s", e)
+    except Exception as e:
+        logging.error("Error in get_google_auth: %s", e)
+
+    return creds
+
+
+
+
+
+
+def get_google_auth():
+    creds = None
+
+    try:
+        if os.path.exists("token.json"):
+            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                try:
+                    if not os.path.exists("client_secret.json"):
+                        handle_missing_client_secret()
+
+                    flow = InstalledAppFlow.from_client_secrets_file("client_secret.json", SCOPES)
+                    creds = flow.run_local_server(port=0)
+
+                    if current_user.is_authenticated:
+                        current_user.set_google_calendar_token(creds.to_json())
+
+                    with open("token.json", "w") as token_file:
+                        token_file.write(creds.to_json())
+                except Exception as e:
+                    logging.error('Error during authentication: %s', e)
+                    flash("An error occurred during authentication. Please try again.", 'danger')
+
+    except FileNotFoundError as e:
+        logging.error("Token file not found: %s", e)
+        flash("Token file not found. Please check your configuration.", 'danger')
+    except Exception as e:
+        logging.error("Error in get_google_auth: %s", e)
+        flash("An error occurred. Please try again.", 'danger')
+
+    return creds
